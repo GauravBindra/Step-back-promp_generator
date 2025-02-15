@@ -74,6 +74,7 @@ def load_csv_locally():
     Loads the restaurant CSV from GitHub and converts it into structured text documents.
     """
     local_csv_path = "https://github.com/GauravBindra/Step-back-promp_generator/blob/main/restaurant_data_3.csv"
+
     
     df = pd.read_csv(local_csv_path)
 
