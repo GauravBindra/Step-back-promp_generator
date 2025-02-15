@@ -29,7 +29,6 @@ from langchain.vectorstores import FAISS
 from langchain.embeddings import HuggingFaceEmbeddings
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from huggingface_hub import hf_hub_download
-from llama_cpp import Llama
 
 import pandas as pd
 import re
