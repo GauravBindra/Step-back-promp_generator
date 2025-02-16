@@ -277,7 +277,7 @@ def retrieve_relevant_chunks(query: str, top_k=5):
 
 def generate_response(query: str, retrieved_chunks: list) -> str:
     """
-    Generates a response using OpenAI's GPT-4o with structured and unstructured context.
+    Generates a response using OpenAI's GPT-4 with structured and unstructured context.
     """
     if not retrieved_chunks:
         return "I do not have enough information to answer this query."
@@ -333,9 +333,9 @@ def generate_response(query: str, retrieved_chunks: list) -> str:
     ### ✅ AI Response:
     """
 
-    # OpenAI API Call (GPT-4o)
+    # OpenAI API Call (GPT-4)
     response = client.chat.completions.create(
-        model="gpt-4o",
+        model="gpt-4",  
         messages=[
             {"role": "system", "content": system_message},
             {"role": "user", "content": query}
