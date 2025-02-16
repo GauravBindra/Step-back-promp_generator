@@ -209,6 +209,7 @@ if all_documents:
     st.sidebar.success(f"✅ Total documents loaded: {len(all_documents)} (CSV + Wikipedia)")
 else:
     st.sidebar.warning("⚠️ No documents loaded. Please check your GitHub data sources.")
+st.write("🔍 Sample Document:", all_documents[0])
 
 
 import streamlit as st
@@ -224,7 +225,18 @@ def create_faiss_index(_documents):
     if not _documents:
         st.sidebar.warning("⚠️ No documents available to store in FAISS.")
         return None
-    return FAISS.from_documents(_documents, embedding_model)
+
+    # Print first few documents
+    st.write(f"🔍 Checking First 3 Documents for FAISS Indexing:")
+    for i, doc in enumerate(_documents[:3]):
+        st.write(f"Document {i+1}: {doc}")
+
+    try:
+        return FAISS.from_documents(_documents, embedding_model)
+    except Exception as e:
+        st.error(f"❌ FAISS Indexing Failed: {e}")
+        return None
+
 
 
 # Store Wikipedia + CSV text in FAISS
@@ -277,7 +289,7 @@ def retrieve_relevant_chunks(query: str, top_k=5):
 
 def generate_response(query: str, retrieved_chunks: list) -> str:
     """
-    Generates a response using OpenAI's GPT-4 with structured and unstructured context.
+    Generates a response using OpenAI's GPT-4o with structured and unstructured context.
     """
     if not retrieved_chunks:
         return "I do not have enough information to answer this query."
@@ -333,9 +345,9 @@ def generate_response(query: str, retrieved_chunks: list) -> str:
     ### ✅ AI Response:
     """
 
-    # OpenAI API Call (GPT-4)
+    # OpenAI API Call (GPT-4o)
     response = client.chat.completions.create(
-        model="gpt-4",  
+        model="gpt-4o",
         messages=[
             {"role": "system", "content": system_message},
             {"role": "user", "content": query}
