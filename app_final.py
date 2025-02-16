@@ -8,17 +8,15 @@ import os
 
 load_dotenv()
 
-# Try to get API key from Streamlit secrets first, then fall back to environment variable
-try:
-    api_key = st.secrets["OPENAI_API_KEY"]
-except:
-    api_key = os.getenv("OPENAI_API_KEY")
+# Get API key directly from environment variable
+api_key = os.getenv("OPENAI_API_KEY")
 
 if api_key:
     print("✅ API Key loaded successfully.")
-    client = openai.OpenAI(api_key=api_key)  # Initialize the client with the API key
+    client = openai.OpenAI(api_key=api_key)
 else:
-    print("❌ API Key not found. Check your .env file or environment variables.")
+    print("❌ API Key not found. Check your environment variables.")
+    st.error("OpenAI API key not found. Please configure the OPENAI_API_KEY environment variable.")
 
 
 
@@ -211,9 +209,6 @@ else:
 import streamlit as st
 from langchain.vectorstores import FAISS
 from langchain.embeddings import OpenAIEmbeddings
-
-# Ensure OpenAI API key is loaded from Streamlit secrets
-# openai_api_key = st.secrets["openai_api_key"]
 
 # Use OpenAI's embedding model
 embedding_model = OpenAIEmbeddings(model="text-embedding-ada-002", openai_api_key=api_key)
