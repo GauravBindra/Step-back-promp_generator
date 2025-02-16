@@ -207,7 +207,7 @@ if all_documents:
     st.sidebar.success(f"✅ Total documents loaded: {len(all_documents)} (CSV + Wikipedia)")
 else:
     st.sidebar.warning("⚠️ No documents loaded. Please check your GitHub data sources.")
-st.write("🔍 Sample Document:", all_documents[0])
+# st.write("🔍 Sample Document:", all_documents[0])
 
 
 import streamlit as st
@@ -225,9 +225,9 @@ def create_faiss_index(_documents):
         return None
 
     # Print first few documents
-    st.write(f"🔍 Checking First 3 Documents for FAISS Indexing:")
-    for i, doc in enumerate(_documents[:3]):
-        st.write(f"Document {i+1}: {doc}")
+    # st.write(f"🔍 Checking First 3 Documents for FAISS Indexing:")
+    # for i, doc in enumerate(_documents[:3]):
+    #     st.write(f"Document {i+1}: {doc}")
 
     try:
         return FAISS.from_documents(_documents, embedding_model)
