@@ -73,7 +73,7 @@ def load_csv_locally():
     """
     Loads the restaurant CSV from GitHub and converts it into structured text documents.
     """
-    local_csv_path = "https://github.com/GauravBindra/Step-back-promp_generator/blob/main/restaurant_data_3.csv"
+    local_csv_path = "https://raw.githubusercontent.com/GauravBindra/Step-back-promp_generator/main/restaurant_data_3.csv"
 
     
     df = pd.read_csv(local_csv_path)
@@ -148,7 +148,7 @@ def load_wikipedia_data():
     """
     Loads Wikipedia restaurant knowledge data from a local JSON file.
     """
-    local_json_path = "https://github.com/GauravBindra/Step-back-promp_generator/blob/main/wikipedia_restaurant_knowledge.json"  # Local file path
+    local_json_path = "https://raw.githubusercontent.com/GauravBindra/Step-back-promp_generator/main/wikipedia_restaurant_knowledge.json"  # Local file path
 
     try:
         with open(local_json_path, "r", encoding="utf-8") as file:
