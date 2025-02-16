@@ -73,12 +73,15 @@ def categorize_menu_item(category):
 @st.cache_data
 def load_csv_locally():
     """
-    Loads the restaurant CSV from GitHub and converts it into structured text documents.
+    Loads the restaurant CSV from GitHub URL and converts it into structured text documents.
     """
-    local_csv_path = "https://raw.githubusercontent.com/GauravBindra/Step-back-promp_generator/main/restaurant_data_3.csv"
+    csv_url = "https://raw.githubusercontent.com/GauravBindra/Step-back-promp_generator/main/restaurant_data_3.csv"
 
-    
-    df = pd.read_csv(local_csv_path)
+    try:
+        df = pd.read_csv(csv_url)
+    except Exception as e:
+        st.error(f"Error loading CSV data: {e}")
+        return []
 
     # Ensure missing values are replaced
     df = df.fillna({
@@ -148,13 +151,14 @@ import json
 @st.cache_data
 def load_wikipedia_data():
     """
-    Loads Wikipedia restaurant knowledge data from a local JSON file.
+    Loads Wikipedia restaurant knowledge data from GitHub URL.
     """
-    local_json_path = "https://raw.githubusercontent.com/GauravBindra/Step-back-promp_generator/main/wikipedia_restaurant_knowledge.json"  # Local file path
+    json_url = "https://raw.githubusercontent.com/GauravBindra/Step-back-promp_generator/main/wikipedia_restaurant_knowledge.json"
 
     try:
-        with open(local_json_path, "r", encoding="utf-8") as file:
-            data = json.load(file)  # Load JSON data
+        response = requests.get(json_url)
+        response.raise_for_status()  # Raise an exception for bad status codes
+        data = response.json()  # Parse JSON from response
         st.sidebar.success(f"✅ Successfully loaded {len(data)} Wikipedia articles.")
         return data
     except Exception as e:
