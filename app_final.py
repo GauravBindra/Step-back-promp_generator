@@ -14,6 +14,7 @@ api_key = os.getenv("OPENAI_API_KEY")
 if api_key:
     print("✅ API Key loaded successfully.")
     client = openai.OpenAI(api_key=api_key)
+    os.environ["OPENAI_API_KEY"] = api_key  # Set for LangChain compatibility
 else:
     print("❌ API Key not found. Check your environment variables.")
     st.error("OpenAI API key not found. Please configure the OPENAI_API_KEY environment variable.")
@@ -27,8 +28,8 @@ import faiss
 import numpy as np
 import streamlit as st
 from langchain.schema import Document
-from langchain.vectorstores import FAISS
-from langchain.embeddings import HuggingFaceEmbeddings
+from langchain_community.vectorstores import FAISS
+from langchain_openai import OpenAIEmbeddings
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from huggingface_hub import hf_hub_download
 
@@ -211,8 +212,8 @@ else:
 
 
 import streamlit as st
-from langchain.vectorstores import FAISS
-from langchain.embeddings import OpenAIEmbeddings
+from langchain_community.vectorstores import FAISS
+from langchain_openai import OpenAIEmbeddings
 
 # Use OpenAI's embedding model
 embedding_model = OpenAIEmbeddings(model="text-embedding-ada-002", openai_api_key=api_key)
