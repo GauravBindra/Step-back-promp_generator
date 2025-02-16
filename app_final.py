@@ -219,22 +219,62 @@ from langchain_openai import OpenAIEmbeddings
 # Use OpenAI's embedding model
 embedding_model = OpenAIEmbeddings(model="text-embedding-ada-002", openai_api_key=api_key)
 
-@st.cache_resource
-def create_faiss_index(_documents):
+@st.cache_resource(ttl=3600)  # Cache for 1 hour
+def create_faiss_index(_documents, batch_size=50):
     """Create and store FAISS index in memory for retrieval."""
     if not _documents:
         st.sidebar.warning("⚠️ No documents available to store in FAISS.")
         return None
 
-    # Print first few documents
-    st.write(f"🔍 Checking First 3 Documents for FAISS Indexing:")
-    for i, doc in enumerate(_documents[:3]):
-        st.write(f"Document {i+1}: {doc}")
-
     try:
-        return FAISS.from_documents(_documents, embedding_model)
+        print(f"📚 Creating FAISS index with {len(_documents)} documents...")
+        
+        # Initialize embedding model with conservative settings
+        embedding_model = OpenAIEmbeddings(
+            model="text-embedding-ada-002",
+            client=client,
+            max_retries=3,
+            timeout=30,
+            chunk_size=batch_size  # Process in smaller batches
+        )
+
+        # Process documents in batches to reduce memory usage
+        total_documents = len(_documents)
+        index = None
+        
+        for i in range(0, total_documents, batch_size):
+            batch = _documents[i:i + batch_size]
+            print(f"Processing batch {i//batch_size + 1}/{(total_documents + batch_size - 1)//batch_size}")
+            
+            try:
+                # Create batch embeddings with retry logic
+                batch_index = FAISS.from_documents(batch, embedding_model)
+                
+                if index is None:
+                    index = batch_index
+                else:
+                    # Merge indices
+                    index.merge_from(batch_index)
+                
+                # Clear some memory
+                del batch_index
+                import gc
+                gc.collect()
+                
+            except Exception as e:
+                print(f"❌ Error processing batch {i//batch_size + 1}: {str(e)}")
+                continue  # Try next batch instead of failing completely
+        
+        if index is None:
+            raise Exception("Failed to create index from any batch")
+            
+        print("✅ FAISS index created successfully")
+        return index
+
     except Exception as e:
-        st.error(f"❌ FAISS Indexing Failed: {e}")
+        error_msg = f"❌ Error creating FAISS index: {str(e)}"
+        print(error_msg)
+        st.sidebar.error(error_msg)
         return None
 
 
